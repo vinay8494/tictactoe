@@ -2,9 +2,14 @@
 
 A simple game played between two players.
 
+### Demo
+
+Checkout the live demo of tictactoe [here](https://vinay8494.github.io/tictactoe/)
+
 ## Requirements
 
 For development, you will only need Node.js installed on your environement.
+
 
 ### Node
 
@@ -54,7 +59,3 @@ Also, be sure to have `git` available in your PATH, `npm` might need it.
 ## Start & watch
 
     $ npm start
-
-## Simple build for production
-
-    $ npm run build
