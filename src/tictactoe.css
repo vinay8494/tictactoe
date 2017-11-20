@@ -32,6 +32,7 @@ ul {
   text-align: center;
   width: 134px;
   border-radius: 20px;
+  cursor: pointer;
 }
 
 .square:focus {
