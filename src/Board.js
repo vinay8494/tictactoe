@@ -112,7 +112,10 @@ class Board extends Component {
           Next Player's Turn : {tileTypes[this.state.turn].name}
         </div>
       );
-    else partial = <div className="gap">Winner : {this.state.winner}</div>;
+    else
+      partial = (
+        <div className="gap">Winner : {tileTypes[this.state.winner].name}</div>
+      );
     return (
       <div>
         <div className="gap">Tic Tac Toe</div>
