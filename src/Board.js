@@ -1,28 +1,43 @@
 import React, { Component } from "react";
 import Square from "./Square";
 import "./tictactoe.css";
+import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import Paper from "material-ui/Paper";
+import RaisedButton from "material-ui/RaisedButton";
+import Dialog from "material-ui/Dialog";
+import FlatButton from "material-ui/FlatButton";
 
 var tileTypes = {
   0: { name: "None", color: "#fff" },
   1: { name: "Player1", color: "#374991" },
-  2: { name: "Player2", color: "black" }
+  2: { name: "Player2", color: "#74ea07" }
+};
+
+const style = {
+  padding: 10,
+  textAlign: "center",
+  display: "block",
+  marginLeft: "auto",
+  marginRight: "auto",
+  maxWidth: "300px"
+};
+
+const initialState = {
+  turn: 1,
+  status: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  count: [0, 0],
+  winner: 0,
+  boardFull: false,
+  open: false
 };
 
 class Board extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      turn: 1,
-      status: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-      count: [0, 0],
-      winner: 0,
-      boardFull: false
-    };
-    this.onItemClick = this.onItemClick.bind(this);
+    this.state = initialState;
   }
 
   checkLineHelper(player, diff, coeff, lineIndex) {
-    console.log(lineIndex, lineIndex + diff, lineIndex + 2 * diff);
     return (
       this.state.status[coeff * lineIndex] === player &&
       this.state.status[coeff * lineIndex + diff] === player &&
@@ -84,17 +99,30 @@ class Board extends Component {
           this.setState({
             winner: win,
             boardFull: totalOccupied,
-            turn: turn
+            turn: turn,
+            open: win !== 0
           });
         }
       );
     }
   }
 
+  handleOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
   renderSquare(i) {
     let boundItemClick = this.onItemClick.bind(this, i);
     const bg = tileTypes[this.state.status[i]].color;
     return <Square onItemClick={boundItemClick} color={bg} />;
+  }
+
+  resetState() {
+    this.setState(initialState);
   }
 
   render() {
@@ -105,30 +133,60 @@ class Board extends Component {
           Next Player's Turn : {tileTypes[this.state.turn].name}
         </div>
       );
-    else
-      partial = (
-        <div className="gap">Winner : {tileTypes[this.state.winner].name}</div>
-      );
+    const actions = [
+      <FlatButton label="Cancel" primary={true} onClick={this.handleClose} />
+    ];
     return (
-      <div>
-        <div className="gap">Tic Tac Toe</div>
-        {partial}
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
+      <MuiThemeProvider>
+        <div className="board">
+          <Paper style={style} zdepth={10}>
+            <div className="gap" style={{ fontWeight: "bold" }}>
+              Tic Tac Toe
+            </div>
+            {partial}
+            <div className="board-row">
+              {this.renderSquare(0)}
+              {this.renderSquare(1)}
+              {this.renderSquare(2)}
+            </div>
+            <div className="board-row">
+              {this.renderSquare(3)}
+              {this.renderSquare(4)}
+              {this.renderSquare(5)}
+            </div>
+            <div className="board-row">
+              {this.renderSquare(6)}
+              {this.renderSquare(7)}
+              {this.renderSquare(8)}
+            </div>
+            <RaisedButton
+              backgroundColor="#a81572"
+              label="Reset"
+              labelColor="#fff"
+              disabledBackgroundColor="#a4a4a4"
+              style={{
+                margin: 10
+              }}
+              onClick={this.resetState.bind(this)}
+            />
+            <Dialog
+              actions={actions}
+              modal={false}
+              bodyStyle={{
+                color: tileTypes[this.state.winner].color
+              }}
+              contentStyle={{
+                maxWidth: "300px",
+                textColor: tileTypes[this.state.winner].color
+              }}
+              open={this.state.open}
+              onRequestClose={this.handleClose}
+            >
+              {"Winner is " + tileTypes[this.state.winner].name}
+            </Dialog>
+          </Paper>
         </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
+      </MuiThemeProvider>
     );
   }
 }
