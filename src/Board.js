@@ -21,29 +21,21 @@ class Board extends Component {
     this.onItemClick = this.onItemClick.bind(this);
   }
 
-  checkLineHelper(player, diff) {
-    let i = 0,
-      j = 0;
-    while (j < 3) {
-      if (
-        this.state.status[i] === player &&
-        this.state.status[i + diff] === player &&
-        this.state.status[i + 2 * diff] === player
-      ) {
-        return true;
-      }
-      j++;
-      i += 3;
-    }
-    return false;
+  checkLineHelper(player, diff, coeff, lineIndex) {
+    console.log(lineIndex, lineIndex + diff, lineIndex + 2 * diff);
+    return (
+      this.state.status[coeff * lineIndex] === player &&
+      this.state.status[coeff * lineIndex + diff] === player &&
+      this.state.status[coeff * lineIndex + 2 * diff] === player
+    );
   }
 
-  checkHorizontalLines(player) {
-    return this.checkLineHelper(player, 1);
+  checkHorizontalLines(player, position) {
+    return this.checkLineHelper(player, 1, 3, Math.floor(position / 3));
   }
 
-  checkVerticalLines(player) {
-    return this.checkLineHelper(player, 3);
+  checkVerticalLines(player, position) {
+    return this.checkLineHelper(player, 3, 1, position % 3);
   }
 
   checkDiagnols(player) {
@@ -54,10 +46,10 @@ class Board extends Component {
     );
   }
 
-  checkPlayerWin(player) {
+  checkPlayerWin(player, position) {
     return (
-      this.checkHorizontalLines(player) ||
-      this.checkVerticalLines(player) ||
+      this.checkHorizontalLines(player, position) ||
+      this.checkVerticalLines(player, position) ||
       this.checkDiagnols(player)
     );
   }
@@ -75,11 +67,12 @@ class Board extends Component {
           turn: 3 - this.state.turn
         },
         () => {
+          console.log(this.state.status);
           let win = 0;
           let candidateToWin = 3 - this.state.turn;
           if (
             arrayCount[candidateToWin - 1] > 2 &&
-            this.checkPlayerWin(candidateToWin)
+            this.checkPlayerWin(candidateToWin, item)
           ) {
             win = candidateToWin;
           }
