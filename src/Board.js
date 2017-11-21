@@ -10,7 +10,8 @@ import FlatButton from "material-ui/FlatButton";
 var tileTypes = {
   0: { name: "None", color: "#fff" },
   1: { name: "Player1", color: "#374991" },
-  2: { name: "Player2", color: "#74ea07" }
+  2: { name: "Player2", color: "#74ea07" },
+  3: { name: "None", color: "black" }
 };
 
 const style = {
@@ -27,7 +28,6 @@ const initialState = {
   status: [0, 0, 0, 0, 0, 0, 0, 0, 0],
   count: [0, 0],
   winner: 0,
-  boardFull: false,
   open: false
 };
 
@@ -82,7 +82,6 @@ class Board extends Component {
           turn: 3 - this.state.turn
         },
         () => {
-          console.log(this.state.status);
           let win = 0;
           let candidateToWin = 3 - this.state.turn;
           if (
@@ -91,14 +90,16 @@ class Board extends Component {
           ) {
             win = candidateToWin;
           }
-          let totalOccupied =
+          if (
             arrayCount[candidateToWin - 1] + arrayCount[this.state.turn - 1] ===
-            9;
+              9 &&
+            win === 0
+          ) {
+            win = 3;
+          }
           let turn = this.state.turn;
-          if (totalOccupied === true) turn = 0;
           this.setState({
             winner: win,
-            boardFull: totalOccupied,
             turn: turn,
             open: win !== 0
           });
@@ -127,15 +128,28 @@ class Board extends Component {
 
   render() {
     let partial = null;
-    if (this.state.winner === 0)
+    let message = null;
+    if (this.state.winner === 0) {
       partial = (
-        <div className="gap">
+        <div
+          className="gap"
+          style={{
+            color: tileTypes[this.state.turn].color
+          }}
+        >
           Next Player's Turn : {tileTypes[this.state.turn].name}
         </div>
       );
+    }
+    if (this.state.winner === 3) {
+      message = "Match drawn";
+    } else {
+      message = "Winner is " + tileTypes[this.state.winner].name;
+    }
     const actions = [
       <FlatButton label="Cancel" primary={true} onClick={this.handleClose} />
     ];
+
     return (
       <MuiThemeProvider>
         <div className="board">
@@ -182,7 +196,7 @@ class Board extends Component {
               open={this.state.open}
               onRequestClose={this.handleClose}
             >
-              {"Winner is " + tileTypes[this.state.winner].name}
+              {message}
             </Dialog>
           </Paper>
         </div>
