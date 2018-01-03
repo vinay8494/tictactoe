@@ -189,6 +189,10 @@ class Board extends Component {
   };
 
   handleClose = () => {
+    this.setState({ open: false });
+  };
+
+  resetGame = () => {
     this.resetState();
   };
 
@@ -227,10 +231,10 @@ class Board extends Component {
     const actions = [
       <FlatButton
         label="Play Again"
-        primary={true}
         className="info"
-        onClick={this.handleClose}
-      />
+        onClick={this.resetGame}
+      />,
+      <FlatButton label="Dismiss" onClick={this.handleClose} />
     ];
 
     return (
@@ -313,7 +317,7 @@ class Board extends Component {
                   textColor: tileTypes[this.state.winner].color
                 }}
                 open={this.state.open}
-                onRequestClose={this.handleClose}
+                onRequestClose={this.resetGame}
               >
                 {message}
               </Dialog>
